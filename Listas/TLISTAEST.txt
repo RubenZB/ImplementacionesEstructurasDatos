@@ -1,0 +1,143 @@
+UNIT uListaEst;
+INTERFACE
+	USES uElemento;
+	
+	CONST N = 10;
+	TYPE
+		TLista = RECORD
+					almacen: ARRAY[1..N] OF TElemento;
+					numElementos: 0..N;
+	             END;
+
+	(* Constructoras generadoras *)
+	PROCEDURE CrearVacia (VAR lista: tLista);
+	PROCEDURE Construir (elem: tElemento; VAR lista: tLista);
+
+	(* Observadoras selectoras *)
+	PROCEDURE Primero (lista: tLista; VAR elem: tElemento);
+	PROCEDURE Resto  (lista: tLista; VAR restoLista: tLista);
+
+	(* Observadoras no selectoras *)
+	FUNCTION EsVacia (lista: tLista): boolean;
+	FUNCTION Longitud (lista: tLista): integer;
+	PROCEDURE Ultimo (lista: tLista; VAR elem: tElemento);
+	FUNCTION Pertenece (elem:tElemento; lista: tLista): boolean;
+
+	(* Constructoras no generadoras *)
+	PROCEDURE Concatenar (lista:tLista; lista2: tLista; VAR lista3: tLista);
+	PROCEDURE BorrarElemento (elem:tElemento; VAR lista: tLista);
+	PROCEDURE InsertarFinal (elem:tElemento; VAR lista: tLista);
+
+IMPLEMENTATION 
+
+PROCEDURE CrearVacia (VAR lista: tLista);
+BEGIN
+	lista.numElementos := 0;
+END;
+
+PROCEDURE Construir (elem: tElemento; VAR lista: tLista);
+VAR i: integer;
+BEGIN
+	IF lista.numElementos < N THEN
+		BEGIN
+			lista.numElementos := lista.numElementos + 1;
+			FOR i:= lista.numElementos DOWNTO 2 DO 
+				Asignar(almacen[i], lista.almacen[i-1]);
+			Asignar(lista.almacen[1], elem)
+		END
+END;
+
+PROCEDURE Primero (lista: tLista; VAR elem: tElemento);
+BEGIN
+	IF NOT EsVacia(lista) THEN
+		Asignar(elem, lista.almacen[1])
+END;
+
+PROCEDURE Resto1 (lista: tLista; VAR restoLista: tLista);
+(*Se crea una lista nueva para almacenar el resto*)
+VAR i: integer;
+BEGIN
+	IF NOT EsVacia(lista) THEN
+		BEGIN
+			CrearVacia(restoLista);
+			FOR i := 2 TO lista.numElementos DO
+				Asignar(restoLista.almacen[i-1], lista.almacen[i]);
+			restoLista.numElementos := lista.numElementos - 1
+		END
+END;
+
+PROCEDURE Resto2 (VAR lista: tLista);
+(*Se modifica la lista original *)
+VAR i: integer;
+BEGIN
+	IF NOT EsVacia(lista) THEN
+		BEGIN
+			FOR i := 2 TO lista.numElementos DO
+				Asignar(lista.almacen[i-1], lista.almacen[i]);
+			lista.numElementos := lista.numElementos - 1
+		END
+END;
+
+FUNCTION EsVacia (lista: tLista): boolean;
+BEGIN
+	EsVacia := lista.numElementos = 0
+END;
+
+FUNCTION Longitud(lista: tLista): integer;
+BEGIN
+	Longitud := lista.numElementos
+END;
+
+PROCEDURE Ultimo (lista: tLista; VAR elem: tElemento);
+BEGIN
+	Asignar(L.almacen[ini],elem);
+END;
+
+FUNCTION Pertenece (elem:tElemento; lista: tLista): boolean;
+VAR i: integer;
+BEGIN
+	i := 0;
+	REPEAT
+		i:= i + 1
+	UNTIL Iguales(elem, lista.almacen[i]) OR (i= lista.numElementos);
+	Pertenece:= Igual(elem, lista.almacen[i])
+END;
+
+PROCEDURE Concatenar (lista:tLista; lista2: tLista; VAR lista3: tLista);
+VAR i,j:integer	
+BEGIN
+ FOR i:=0 TO lista.numElementos DO
+  BEGIN
+   Construir(lista.almacen[i],lista3);
+   lista3.numElementos :=  lista3.numElementos+1;
+  END;
+ FOR j:=0 TO lista2.numElementos DO
+  BEGIN
+   Construir(lista2.almacen[i],lista3);
+   lista3.numElementos :=  lista3.numElementos+1;
+  END; 	
+END;
+
+PROCEDURE BorrarElemento (elem:tElemento; VAR lista: tLista);
+VAR i, j: integer;
+BEGIN
+	i := 0;
+	REPEAT
+		i:= i + 1
+	UNTIL Igual(elem, lista.almacen[i]) OR (i= lista.numElementos);
+	IF Igual(elem, lista.almacen[i]) THEN
+		BEGIN
+			FOR j:= i TO lista.numElementos - 1 DO
+				Asignar(lista.almacen[j], lista.almacen[j+1]);
+			lista.numElementos := lista.numElementos - 1
+		END
+END;
+
+PROCEDURE InsertarFinal (elem:tElemento; VAR lista: tLista);	
+BEGIN
+	IF lista.numElementos < N THEN
+          asignar(lista[lista.numElementos+1,elem);
+          lista.numElementos := lista.numElementos+1;
+END;
+
+END.

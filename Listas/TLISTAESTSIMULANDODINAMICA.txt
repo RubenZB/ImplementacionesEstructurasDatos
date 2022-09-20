@@ -1,0 +1,129 @@
+unit uListaEstSD;
+interface
+	USES uElemento;
+
+	CONST MAX_ELEM = 5;
+	TYPE
+		tEnlace = 0..MAX_ELEM; (* 0 = nulo *)
+		tNodo = RECORD
+					elemento: tElemento;
+					sig: TEnlace;
+				END;
+		tMemoria = ARRAY [tRango] OF tNodo;
+		tLista = RECORD
+					almacen: tMemoria;
+					pOcupadas: tEnlace;
+					pLibres: tEnlace;
+				END;
+
+	(* Constructoras generadoras *)
+	PROCEDURE CrearVacia (VAR lista: tLista);
+	PROCEDURE Construir (elem: tElemento; VAR lista: tLista);
+
+	(* Observadoras selectoras *)
+	PROCEDURE Primero (lista: tLista; VAR elem: tElemento);
+	PROCEDURE Resto  (lista: tLista; VAR restoLista: tLista);
+
+	(* Observadoras no selectoras *)
+	FUNCTION EsVacia (lista: tLista):  boolean;
+	FUNCTION Longitud (lista: tLista): integer;
+	PROCEDURE Ultimo (lista: tLista; VAR elem: tElemento);
+	FUNCTION Pertenece (elem:tElemento; lista: tLista): boolean;
+
+	(* Constructoras no generadoras *)
+	PROCEDURE Concatenar (lista:tLista; lista2: tLista; VAR lista3: tLista);
+	PROCEDURE BorrarElemento (elem:tElemento; VAR lista: tLista);
+	PROCEDURE InsertarFinal (elem:tElemento; VAR lista: tLista);
+
+IMPLEMENTATION
+
+PROCEDURE CrearVacia (VAR lista: tLista);
+VAR i: integer;
+BEGIN
+	lista.pOcupadas := 0;
+	lista.pLibres := 1;
+	FOR i:= 1 TO N-1 DO
+		lista.almacen[i].sig := i+1;
+	lista.almacen[N].sig := 0
+END;
+
+PROCEDURE Construir (elem: tElemento; VAR lista: tLista);
+VAR aux: tEnlace;
+BEGIN
+	IF lista.pLibres <> 0 THEN
+		BEGIN
+			aux := lista.pLibres;
+			lista.pLibres := lista.almacen[lista.pLibres].sig;
+			Asignar(lista.almacen[aux].elemento, elem);
+			lista.almacen[aux].sig := lista.pOcupadas;
+			lista.pOcupadas := aux
+		END
+END;
+
+PROCEDURE Primero (lista: tLista; VAR elem: tElemento);
+BEGIN
+	IF NOT EsVacia(lista) THEN
+		Asignar(elem, lista.almacen[lista.pOcupadas].elemento)
+	
+END;
+
+FUNCTION EsVacia (lista: tLista):  boolean;
+BEGIN
+	EsVacia := lista.pOcupadas = 0
+END;
+
+PROCEDURE EliminarCabecera(VAR lista: TLista);
+VAR aux: TEnlace;
+BEGIN
+	IF NOT EsVacia(lista) THEN
+		BEGIN
+		   aux := lista.pLibres;
+		   lista.pLibres := lista.pOcupadas;
+		   lista.pOcupadas := lista.almacen[lista.pOcupadas].sig;
+		   lista.almacen[lista.pLibres].sig := aux
+		END
+END;
+
+PROCEDURE BorrarElemento (elem:tElemento; VAR lista: tLista);
+VAR anterior, actual: tEnlace;
+BEGIN
+	anterior := 0;
+	actual := lista.pOcupadas;
+	WHILE (actual <> 0) AND (NOT Igual(lista.almacen[actual].elemento, elem) DO	
+		BEGIN
+			anterior := actual;
+			actual := lista.almacen[actual].sig
+		END;
+	IF actual <> 0 THEN
+		BEGIN
+			IF anterior = 0 THEN
+				EliminarCabecera(lista)
+			ELSE BEGIN
+				lista.almacen[anterior].sig := lista.almacen[actual].sig;
+				lista.almacen[actual].sig := lista.pLibres;
+				lista.pLibres:= actual			
+			END
+				
+END;
+
+
+PROCEDURE InsertarFinal (elem:tElemento; VAR lista: tLista);
+VAR aux, aux2: tEnlace;
+BEGIN
+	IF EsVacia(lista) THEN	
+		Construir(elem, lista)
+	ELSE IF lista.pLibres <> 0 THEN
+		BEGIN
+			aux := lista.pOcupadas;
+			WHILE lista.almacen[aux].sig <> 0 DO	
+				aux := lista.almacen[aux].sig;
+				
+			aux2 := lista.pLibres;
+			lista.pLibres := lista.almacen[lista.pLibres].sig;
+			Asignar (lista.almacen[aux2].elemento, elem);
+			lista.almacen[aux2].sig := 0;
+			lista.almacen[aux].sig := aux2
+		END
+END;
+
+END.

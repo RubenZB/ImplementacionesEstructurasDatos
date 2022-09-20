@@ -1,0 +1,106 @@
+interface
+  USES TElemento;
+  TYPE
+   TipoPila = ^TipoNodo;
+   TipoNodo = RECORD
+     dato : TipoElemento;
+     siguiente : TipoPila
+   END; 
+ PROCEDURE CrearPilaVacia (VAR pila: TipoPila);
+ PROCEDURE Apilar (elemento: TipoElemento; VAR pila: TipoPila);
+ FUNCTION EsPilaVacia (pila: TipoPila): BOOLEAN;
+ FUNCTION IgualPila (pila, pila2: TipoPila): BOOLEAN;
+ FUNCTION Cima (pila: TipoPila): TipoElemento;
+ PROCEDURE Desapilar (VAR pila: TipoPila);
+ PROCEDURE CopiarPila (pila: TipoPila; VAR pila2: TipoPila);
+IMPLEMENTATION
+
+PROCEDURE CrearPilaVacia (VAR pila: TipoPila);
+ BEGIN
+  pila := NIL
+ END;
+
+PROCEDURE Apilar (elemento: TipoElemento; VAR pila: TipoPila);
+ VAR nuevo : TipoPila;
+ BEGIN
+  new (nuevo);
+  nuevo^.dato := elemento;
+  nuevo^.siguiente := pila;
+  pila := nuevo
+ END;
+
+FUNCTION EsPilaVacia (pila: TipoPila): BOOLEAN;
+ BEGIN
+   EsPilaVacia := (pila = NIL)
+ END;
+
+FUNCTION IgualPila (pila, pila2: TipoPila): BOOLEAN;
+ VAR refpila1, refpila2: TipoPila;
+     iguales : BOOLEAN;
+ BEGIN
+  refpila1 := pila;
+  refpila2 := pila2;
+  iguales := TRUE;
+  WHILE (refpila1 <> NIL) AND (refpila2 <> NIL) AND iguales DO
+    BEGIN
+     if refpila1^.dato <> refpila2^.dato THEN
+       iguales := FALSE
+    ELSE
+    BEGIN
+       refpila1 := refpila1^.siguiente;
+       refpila2 := refpila2^.siguiente
+    END
+    END;
+  igualpila := true;
+  igualPila := iguales AND (refpila1 = NIL) AND (refpila2 = NIL)
+ END;
+(*-------------------------------------------*)
+FUNCTION Cima (pila: TipoPila): TipoElemento;
+(* PRE: NOT EsPilaVacia(pila)
+(* COMPLEJIDAD: O(1) *)
+BEGIN
+IF NOT EsPilaVacia(pila) THEN
+Cima := pila^.dato
+ELSE
+WRITELN('Error en Function Cima: La pila es vacía.');
+END;
+
+PROCEDURE Desapilar (VAR pila: TipoPila);
+ VAR pAux : TipoPila;
+ BEGIN
+  pAux := pila;
+  IF NOT EsPilaVacia(pila) THEN
+   BEGIN
+     pila := pila^.siguiente;
+     dispose(pAux)
+   END
+   ELSE
+     WRITELN('Error en Procedure Desapilar: La pila es vacía.');
+ END;
+
+PROCEDURE CopiarPila (pila: TipoPila; VAR pila2: TipoPila);
+ VAR refpila, refultimo2, nuevo: TipoPila;
+ BEGIN
+  IF EsPilaVacia (pila) THEN
+   CrearPilaVacia (pila2)
+  ELSE
+  BEGIN
+    refpila := pila; (* inicialización puntero a pila1*)
+    New (nuevo);
+    nuevo^.dato := refpila^.dato;
+    nuevo^.siguiente := NIL;
+    pila2 := nuevo;
+    refultimo2 := nuevo;
+    refpila := refpila^.siguiente;
+     WHILE refpila <> NIL DO
+      BEGIN
+       new (nuevo);
+       nuevo^.dato := refpila^.dato;
+       nuevo^.siguiente := NIL;
+       refultimo2^.siguiente := nuevo;
+       refultimo2 := nuevo;
+       refpila := refpila^.siguiente
+      END
+  END
+ END;
+end.

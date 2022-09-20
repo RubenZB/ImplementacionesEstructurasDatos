@@ -1,0 +1,59 @@
+{Con puntero a principio y final}
+unit uColaDinPF;
+interface
+TYPE
+	tEnlace = ^tNodo;
+	tNodo = RECORD
+				elemento: tElemento;
+				sig: tEnlace
+			END;
+	tCola = RECORD
+				p, f: tEnlace
+			END;
+PROCEDURE CrearColaVacia(VAR c:tCola);
+PROCEDURE Insertar(e:tElemento; VAR c:tCola);
+PROCEDURE Eliminar(VAR c:tCola);
+FUNCTION EsVacia(VAR c:tCola);
+
+implementation
+
+PROCEDURE CrearColaVacia(VAR c:tCola);
+ BEGIN
+  c.p := NIL;
+  c.f := NIL;
+ END;
+
+PROCEDURE Eliminar (VAR cola: TCola);
+VAR aux: TEnlace;
+BEGIN
+	IF NOT EsColaVacia(cola) THEN
+		BEGIN
+			aux := cola.p;
+			cola.p := cola.p^.sig
+			dispose(aux);
+			IF cola.p = NIL THEN
+				cola.f:= NIL
+		END
+END;
+
+PROCEDURE insertar (elem: TElemento; VAR cola: TCola);
+VAR nuevo: TEnlace;
+BEGIN
+	new(nuevo);
+	Asignar(nuevo^.elemento, elem);
+	nuevo^.sig := NIL;
+	IF EsColaVacia(cola) THEN	
+		cola.p := nuevo
+	ELSE
+		cola.f^.sig := nuevo;
+END;
+
+FUNCTION EsVacia(VAR c:tCola);
+ BEGIN
+  IF (c.p = NIL) AND (c.f = NIL) THEN
+    EsVacia := TRUE;
+ END;
+end.
+
+	cola.f := nuevo
+END;

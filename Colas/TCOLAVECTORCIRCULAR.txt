@@ -1,0 +1,18 @@
+TYPE
+	TPosicion = 0..N;
+	TCola = RECORD
+				almacen: ARRAY [1..N] OF TElemento;
+				p, f: TPosicion
+			END;
+
+FUNCTION CrearColaVacia(VAR cola: TCola);
+BEGIN
+    cola.p := 1;
+	cola.f := 1
+END;
+
+PROCEDURE Eliminar(VAR cola: TCola);
+BEGIN
+	IF NOT EsColaVacia(cola) THEN
+		cola.p := (cola.p + 1) MOD N
+END;

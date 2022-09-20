@@ -1,0 +1,145 @@
+UNIT uListaDinOrd; 
+INTERFACE
+USES
+	uElemento;
+TYPE
+	tListaOrd = ^TNodo;
+	TNodo= RECORD
+		elemento: TElemento;
+		siguiente: tListaOrd;
+	END;
+
+{OPERACIONES CONSTRUCTORAS GENERADORAS}
+PROCEDURE CrearVacia(VAR lista: tListaOrd);
+PROCEDURE InsertarOrd(elem: TElemento; VAR lista: tListaOrd);
+
+{OPERACIONES OBSERVADORAS SELECTORAS}
+PROCEDURE Primero(lista: tListaOrd; VAR elem: TElemento);
+PROCEDURE Resto(lista: tListaOrd; VAR restoLista: tListaOrd);
+
+{OPERACIONES OBSERVADORAS NO SELECTORAS}
+FUNCTION EsVacia(lista: tListaOrd):  boolean;
+FUNCTION Longitud(lista: tListaOrd): integer;
+PROCEDURE Ultimo (lista: tListaOrd; VAR elem: tElemento);
+FUNCTION Pertenece(elem:TElemento; lista: tListaOrd): boolean;
+
+{OPERACIONES CONSTRUCTORAS NO GENERADORAS}
+PROCEDURE Mezclar(lista:tListaOrd; lista2: tListaOrd; VAR lista3: tListaOrd);
+PROCEDURE BorrarElemento (elem:TElemento; VAR lista: tListaOrd);
+
+IMPLEMENTATION
+
+PROCEDURE CrearVacia(VAR lista: tListaOrd);
+ BEGIN
+  lista := NIL;
+ END;
+
+PROCEDURE InsertarOrd(elem: TElemento; VAR lista: tListaOrd);
+	VAR nuevo, anterior ,actual: ^tNodo;
+	BEGIN
+		new(nuevo);
+		Asignar(nuevo^.elemento, elem);
+		actual := lista;
+		WHILE NOT EsVacia(actual) AND Menor(actual^.elemento, elem) DO
+			BEGIN
+			   anterior := actual;
+			   actual := actual^.siguiente
+			END;
+		IF actual = lista THEN (*inserta al principio*)
+			BEGIN
+				nuevo^.siguiente := lista;
+				lista := nuevo
+			END
+		ELSE BEGIN
+				anterior^.siguiente := nuevo;
+				nuevo^.siguiente := actual
+			END
+
+	END;
+
+
+PROCEDURE Primero(lista: tListaOrd; VAR elem: TElemento);
+ BEGIN
+  IF NOT EsVacia(lista) THEN
+			Asignar(elem, lista^.elemento)
+ END;
+
+PROCEDURE Resto(lista: tListaOrd; VAR restoLista: tListaOrd);
+ BEGIN
+  IF NOT EsVacia(lista) THEN
+   restoLista := lista^.siguiente;
+ END;
+
+FUNCTION EsVacia(lista: tListaOrd):  boolean;
+ BEGIN
+   EsVacia := (lista = NIL);
+ END;
+
+FUNCTION Longitud(lista: tListaOrd): integer;
+ BEGIN
+  IF EsVacia(lista) THEN
+   Longitud := 0
+  ELSE
+   while ( lista^.siguiente <> NIL) DO
+    BEGIN
+     Longitud := Longitud +1;
+     lista := lista^.siguiente
+    END;
+ END;
+
+PROCEDURE Ultimo (lista: tListaOrd; VAR elem: tElemento);
+ 	VAR pNodo: ^tNodo;
+	BEGIN
+		IF NOT EsVacia(lista) THEN
+			BEGIN
+				pNodo := lista;
+				WHILE (pNodo^.siguiente <> NIL) DO
+					pNodo := pNodo^.siguiente;
+				    asignar(elem,pNodo^.elemento);
+			END
+	END;
+
+FUNCTION Pertenece(elem:TElemento; lista: tListaOrd): boolean;
+ BEGIN
+  while (lista <> NIL) DO
+   BEGIN
+    IF Igual(elem,lista^.elemento) THEN
+     Pertenece := TRUE
+    ELSE
+     lista := lista^.siguiente;
+   END;
+  IF (lista = NIL) THEN
+    Pertenece := FALSE;
+ END;
+
+
+PROCEDURE Mezclar(lista:tListaOrd; lista2: tListaOrd; VAR lista3: tListaOrd);
+ BEGIN
+ END;
+
+PROCEDURE BorrarElemento (elem:TElemento; VAR lista: tListaOrd);
+VAR anterior: ^tNodo;
+	    actual: ^tNodo;
+
+	BEGIN
+	  anterior := lista;
+          actual := lista;
+          WHILE (actual <> NIL) AND Menor(actual^.elemento, elem) DO
+            BEGIN
+              anterior := actual;
+              actual := actual^.siguiente;
+
+            END;
+          IF (actual <> NIL) AND igual(actual^.elemento, elem) THEN
+           BEGIN
+             IF actual = lista THEN
+               lista := actual^.siguiente
+             ELSE
+              anterior^.siguiente := actual^.siguiente;
+
+             dispose(actual);
+
+           END;
+	END;
+
+END.

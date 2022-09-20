@@ -1,0 +1,52 @@
+unit uListaCircular;
+
+interface
+    uses uElemento;
+    TYPE
+    TLista = ^TNodo;
+    TNodo = RECORD
+        e: TElemento;
+        sig: TLista;
+    END;
+
+PROCEDURE CrearVacia(var lista: TLista);
+FUNCTION EsVacia(lista:TLista):boolean;
+PROCEDURE Construir (VAR lista: TLista; elem: TElemento);
+PROCEDURE InsertarFinal(VAR lista:TLista; elem: TElemento);
+
+implementation
+
+PROCEDURE CrearVacia(var lista: TLista);
+BEGIN
+    lista:=NIL;
+END;
+
+FUNCTION EsVacia(lista:TLista):boolean;
+BEGIN
+    EsVacia:=(lista =NIL);
+END;
+
+PROCEDURE Construir (VAR lista: TLista; elem: TElemento);
+VAR nuevo: ^TNodo;
+BEGIN
+    new(nuevo);
+    Asignar (nuevo^.e, elem);
+    IF EsVacia(lista) THEN
+        BEGIN
+          nuevo^.sig := nuevo;
+          lista := nuevo
+        END
+    ELSE BEGIN
+        nuevo^.sig := lista^.sig;
+        lista^.sig := nuevo
+    END
+END;
+
+PROCEDURE InsertarFinal(VAR lista:TLista; elem: TElemento);
+
+BEGIN
+    Construir(lista, elem);
+    lista:= lista^.sig
+END;
+
+end.

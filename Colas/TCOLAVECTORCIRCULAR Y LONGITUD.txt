@@ -1,0 +1,27 @@
+TPosicion= 0..MAX;
+TCola = RECORD 	
+			datos: ARRAY[1..MAX] OF TElemento;
+			p, f: TPosicion;
+			longitud: integer
+		END;
+
+
+PROCEDURE CrearColaVacia(VAR c: TCola);
+BEGIN
+	c.p:= 1;
+	c.f:= 0;
+	c.longitud := 0
+END;
+
+PROCEDURE Insertar(e: TElemento; VAR c: TCola);
+BEGIN
+	IF NOT ColaLlena(c) THEN
+		BEGIN
+			c.f := (c.f + 1) MOD MAX;
+			Asignar(c.datos[c.f], e);
+			c.longitud := c.longitud + 1
+		END
+END;
+
+
+

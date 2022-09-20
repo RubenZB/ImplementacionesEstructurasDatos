@@ -1,0 +1,51 @@
+PROCEDURE Insertar(e: TipoElemento; VAR a: TipoArbolBin); {Complejidad: O(log(n))}
+BEGIN
+  IF EsArbolBinVacio(a) THEN
+   {Crear ArbolBin de un nodo con elemento e: CAB(a,NIL,e,NIL)}
+  ELSE BEGIN
+     IF Menor(e,a^.elemento) THEN BEGIN
+      Insertar(e, a^.izq);
+      IF (Altura(a^.izq) - Altura(a^.der) = 2) THEN {está balanceado??}
+       IF Menor(e,a^.izq^.elemento) THEN
+           RotarSDer(a) {rotación simple derecha}
+       ELSE
+           RotarDIzqDer(a) {rotación doble izquierda-derecha}
+      ELSE {si está balanceado actualizamos la altura}
+        a^.altura := max(Altura(a^.izq), Altura(a^.der)) + 1;
+     END
+ ELSE
+{Caso simétrico para la derecha}
+END;{árbol no vacío}
+END;
+-------------------------------------
+PROCEDURE RotarSDer(VAR a: TipoArbolBin);
+{Rotación a derechas del nodo insertado, y actualiz. alturas}
+{Complejidad: O(1)}
+VAR aux: TipoArbolBin;
+BEGIN
+  IF EsArbolBinVacio(a^.izq) THEN {Existe hijo izquierdo}
+     {Error, debe existir hijo izquierdo}
+  ELSE BEGIN
+    aux := a^.izq;
+    a^.izq := aux^.der;
+    aux^.der := a;
+    a^.altura := max(Altura(a^.izq), Altura(a^.der)) + 1;
+    aux^.altura := max(Altura(aux^.izq), Altura(a)) + 1;
+    a := aux;
+  END;
+END;
+-------------------------------------------------
+PROCEDURE RotarDIzqDer(VAR a:TipoArbolBin);
+ {Rotación doble (izquierda del nodo insertado y derecha de la rotación resultanteanterior)}
+  {Complejidad: O(1)}
+VAR aux: TipoArbolBin;
+BEGIN
+   IF EsArbolBinVacio(a^.izq) THEN {Existe hijo izquierdo}
+      {Error, debe existir hijo izquierdo}
+   ELSE BEGIN
+      RotarSIzq(a^.izq);
+      RotarSDer(a);
+   END;
+
+
+END;

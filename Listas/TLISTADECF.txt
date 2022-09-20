@@ -1,0 +1,29 @@
+TYPE
+ TEnlace = ^TNodo;
+ TNodo = RECORD
+    e:TElemento;
+    ant,sig: TEnlace;
+ END;
+ 
+ TLista = RECORD
+    p,f :TEnlace;
+ END;
+
+PROCEDURE Construir (elem: TElemnto; VAR lista: TLista);
+ VAR nuevo : TEnlace;
+ BEGIN
+  new(nuevo);
+  Asignar(nuevo^.e,elem);
+  nuevo^.ant := NIL;
+  nuevo^.sig := lista.p;
+
+  IF EsVacia(lista) THEN
+   BEGIN
+    lista.p := nuevo;
+    lista.f := nuevo;
+   END
+   ELSE BEGIN
+    lista.p^.ant := nuevo;
+    lista.p := nuevo;
+   END;
+ END;

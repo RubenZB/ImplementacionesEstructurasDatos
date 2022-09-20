@@ -1,0 +1,23 @@
+TYPE 
+	TCola = ^TNodo;
+	TNodo = RECORD	
+				elemento: TElemento;
+				sig: TCola
+			END;
+			
+PROCEDURE insertar(elem: TElemento; VAR cola: TCola);
+VAR nuevo: ^TNodo;
+BEGIN
+	new(nuevo);
+	Asignar(nuevo^.elemento, elem);
+	IF EsColaVacia(cola) THEN	
+		nuevo^.sig := nuevo;
+	ELSE BEGIN
+			nuevo^.sig := cola^.sig;
+			cola^.sig := nuevo;
+		END;
+	cola := nuevo
+END;
+
+
+

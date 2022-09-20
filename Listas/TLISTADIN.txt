@@ -1,0 +1,158 @@
+UNIT uListaDin;
+INTERFACE
+	USES uElemento;
+	TYPE
+		tLista  = ^tNodo;
+		tNodo = RECORD
+			  elem: tElemento;
+			  sig: tLista;
+			end;
+			
+	(* Constructoras generadoras *)	
+	PROCEDURE CrearVacia (VAR lista: tLista);
+	PROCEDURE Construir (elem: tElemento; VAR lista: tLista);
+
+	(* Observadoras selectoras *)
+	PROCEDURE Primero (lista: tLista; VAR elem: tElemento);
+	PROCEDURE Resto  (lista: tLista; VAR restoLista: tLista);
+
+	(* Observadoras no selectoras *)
+	FUNCTION EsVacia (lista: tLista): boolean;
+	FUNCTION Longitud (lista: tLista): integer;
+	PROCEDURE Ultimo (lista: tLista; VAR elem: tElemento);
+	FUNCTION Pertenece (elem:tElemento; lista: tLista): boolean;
+
+	(* Constructoras no generadoras *)
+	PROCEDURE Concatenar (lista:tLista; lista2: tLista; VAR lista3: tLista);
+	PROCEDURE BorrarElemento (elem:tElemento; VAR lista: tLista);
+	PROCEDURE InsertarFinal (elem:tElemento; VAR lista: tLista);
+
+IMPLEMENTATION
+
+	PROCEDURE CrearVacia (VAR lista: tLista);
+        BEGIN
+         lista := NIL
+        END;
+
+	PROCEDURE Construir (elem: tElemento; VAR lista: tLista);
+        VAR
+          pAux : tLista;
+        BEGIN
+          New(pAux);
+          pAux^.elem := elem;
+          pAux^.sig := lista;
+          lista := pAux
+         END;
+
+	PROCEDURE Primero (lista: tLista; VAR elem: tElemento);
+	BEGIN
+		IF NOT EsVacia(lista) THEN
+			Asignar(elem, l^.elem)
+	END;
+	
+	PROCEDURE Resto  (lista: tLista; VAR restoLista: tLista);
+	BEGIN
+		IF NOT EsVacia(lista) THEN
+			restoLista := lista^.sig;
+	END;
+
+	FUNCTION EsVacia (lista: tLista): boolean;
+	
+	FUNCTION Longitud (lista: tLista): integer;
+	VAR l: integer;
+	BEGIN
+		l := 0;
+		WHILE (NOT EsVacia(lista)) DO
+			BEGIN
+				l := 1 + 1;
+				lista := lista^.sig
+			END;
+		Longitud := l
+	END;
+	
+	PROCEDURE Ultimo (lista: tLista; VAR elem: tElemento);
+	VAR pNodo: ^tNodo;
+	BEGIN
+		IF NOT EsVacia(lista) THEN
+			BEGIN
+				pNodo := lista;
+				WHILE (pNodo^.sig<> NIL) DO
+					pNodo := pNodo^.sig;
+				Asignar(elem, pNodo^.elem)				
+			END
+	END;
+	
+	FUNCTION Pertenece (elem:tElemento; lista: tLista): boolean;
+	VAR pNodo: ^tNodo;
+	BEGIN
+		IF EsVacia(lista) THEN
+			Pertenece := FALSE
+		ELSE BEGIN
+			pNodo := lista;
+			WHILE (pNodo<>NIL) AND (NOT Igual(pNodo^.elem, elem)) DO
+				pNodo := pNodo^.sig;
+			IF pNodo = NIL THEN
+				Pertenece := FALSE
+			ELSE 
+				Pertenece := Igual(pNodo^.elem, elem)
+	END;
+
+	PROCEDURE Concatenar (lista:tLista; lista2: tLista; VAR lista3: tLista);
+          VAR
+             pAux: tLista; (* punteros auxiliares para recorrido de 'lista' *)
+          BEGIN
+            IF NOT EsVacia (lista2) THEN {lista2 no es vacía}
+             IF EsVacia (lista) THEN
+               lista := lista2 {lista es vacía pero lista2 no}
+             ELSE
+              BEGIN {lista y lista2 no son vacías}
+               pAux := lista;
+               WHILE pAux^.sig <> NIL DO
+                 pAux := pAux^.sig;
+                 pAux^.sig := lista2 {se añade lista2 al final de lista1}
+              END;
+               lista2:= NIL;
+          END;
+	PROCEDURE BorrarElemento (elem:tElemento; VAR lista: tLista);
+	VAR anterior: ^tNodo;
+	    actual: ^tNodo;
+		posterior: ^tNodo;
+	BEGIN
+		actual:= lista;
+		anterior := lista;
+		
+		WHILE (actual<>NIL) AND (NOT Igual(actual^.elem, elem)) DO
+			BEGIN
+				anterior := actual;
+				actual := actual^.sig
+			END;
+			
+		IF actual<>NIL THEN
+			BEGIN
+				posterior := actual^.sig;
+				anterior^.sig := posterior;
+				IF lista= actual THEN   
+					lista := posterior;
+				dispose(actual)
+			END
+	END;	
+	
+	PROCEDURE InsertarFinal (elem:tElemento; VAR lista: tLista);
+         VAR
+          pAct: tLista;
+          nuevo: tLista; (* nuevo nodo a añadir al final de la lista*)
+         BEGIN
+          IF EsVacia (lista) THEN
+           Construir (elemento, lista)
+          ELSE
+           BEGIN
+            pAct := lista;
+            WHILE pAct^.sig <> NIL DO
+              pAct := pAct^.sig;
+              New (nuevo);
+              nuevo^.elem := elemento;
+              nuevo^.sig:= NIL;
+              pAct^.sig := nuevo
+           END
+         END;
+END.
